@@ -2,6 +2,8 @@ package com.company.g1.g1extrateamlab;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -10,6 +12,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -30,6 +33,11 @@ public class GameActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_game);
 
 		setupSensor();
+
+		ProgressBar mProgressBar = findViewById(R.id.progressBar);
+		mProgressBar.getProgressDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+		mProgressBar.setMax(100);
+		mProgressBar.setProgress(100);
 
 		mGameRound = new GameRound(this);
 		mGameRound.start();
