@@ -49,12 +49,14 @@ public class GameActivity extends AppCompatActivity {
 	protected void onPause() {
 		super.onPause();
 		mSensorListener.stopSensor();
+		mGameRound.pause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		mSensorListener.startSensor();
+		mGameRound.resume();
 	}
 
 	public class GameRound {
@@ -67,6 +69,7 @@ public class GameActivity extends AppCompatActivity {
 		private Timer mTimer;
 
 		private int ticks;
+		private boolean running = false;
 
 		private Context mContext;
 
@@ -79,24 +82,29 @@ public class GameActivity extends AppCompatActivity {
 			layout.addView(player);
 			player.setImageResource(R.mipmap.ic_launcher);
 
-			ticker = new TimerTask() {
-				@Override
-				public void run() {
-					tick();
-				}
-			};
 			mTimer = new Timer();
 			setPlayerLane(0);
 		}
 
 		public void start() {
-			mTimer = new Timer();
 			ticks = 0;
-			mTimer.scheduleAtFixedRate(ticker, 0, 50);
+			resume();
+		}
+
+		public void pause() {
+			if (!running) return;
+			running = false;
+			ticker.cancel();
+		}
+
+		public void resume() {
+			if (running) return;
+			running = true;
+			mTimer.scheduleAtFixedRate(ticker = new Ticker(), 0, 50);
 		}
 
 		public void stop() {
-			mTimer.cancel();
+			pause();
 			startActivity(new Intent(mContext, GameoverActivity.class));
 			finish();
 		}
@@ -123,6 +131,13 @@ public class GameActivity extends AppCompatActivity {
 
 			ticks++;
 			if (ticks >= GAME_TICKS) stop();
+		}
+
+		private class Ticker extends TimerTask {
+			@Override
+			public void run() {
+				tick();
+			}
 		}
 
 	}
