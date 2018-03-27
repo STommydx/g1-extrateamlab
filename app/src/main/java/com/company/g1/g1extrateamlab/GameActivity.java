@@ -78,6 +78,7 @@ public class GameActivity extends AppCompatActivity {
 		private Timer mTimer;
 
 		private int ticks;
+		private int spawn;
 		private boolean running = false;
 
 		private Context mContext;
@@ -102,6 +103,7 @@ public class GameActivity extends AppCompatActivity {
 
 		public void start() {
 			ticks = 0;
+			spawn = 1;
 
 			for(GameEntity gameEntity: enemyList) {
 				gameLayout.removeView(gameEntity);
@@ -159,7 +161,7 @@ public class GameActivity extends AppCompatActivity {
 			for (GameEntity enemy: enemyList) {
 				if (enemy.isCollided(player)) {
 					ProgressBar progressBar = findViewById(R.id.progressBar);
-					final int newHP = progressBar.getProgress() - 15;
+					final int newHP = progressBar.getProgress() - 16;
 					if(newHP < 0) stop();
 					progressBar.post(() -> progressBar.setProgress(newHP));
 					gameLayout.post(() -> gameLayout.removeView(enemy));
@@ -176,8 +178,10 @@ public class GameActivity extends AppCompatActivity {
 			*/
 
 			// new enemy after certain interval
-			Random random = new Random();
-			if (random.nextInt(500) < 4) {
+
+			if (--spawn == 0) {
+				Random random = new Random();
+
 				int layoutWidth = gameLayout.getWidth();
 				int laneWidth = layoutWidth / NO_OF_LANES;
 
@@ -188,9 +192,11 @@ public class GameActivity extends AppCompatActivity {
 				newEnemy.setX(laneWidth * lane + laneWidth / 2 - player.getWidth() / 2);
 				newEnemy.setY(0);
 				gameLayout.post(() -> gameLayout.addView(newEnemy));
-				newEnemy.setAccelerationY(0.05f);
-				newEnemy.setVelocityY(4.0f);
+				newEnemy.setAccelerationY(0.0002f * ticks);
+				newEnemy.setVelocityY(8.0f);
 				enemyList.add(newEnemy);
+
+				spawn = random.nextInt((GAME_TICKS - ticks + 1500) / 20) + 1;
 			}
 
 			ticks++;
