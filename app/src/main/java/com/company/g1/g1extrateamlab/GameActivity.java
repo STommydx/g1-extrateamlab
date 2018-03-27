@@ -14,6 +14,9 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,7 +71,7 @@ public class GameActivity extends AppCompatActivity {
 	public class GameRound {
 
 		private static final int NO_OF_LANES = 3;
-		private static final int GAME_TICKS = 600;
+		private static final int GAME_TICKS = 1000;
 
 		private ImageView player;
 		private TimerTask ticker;
@@ -78,22 +81,33 @@ public class GameActivity extends AppCompatActivity {
 		private boolean running = false;
 
 		private Context mContext;
+		private ConstraintLayout gameLayout;
+
+		private List<GameEntity> enemyList;
 
 		public GameRound(Context context) {
 			mContext = context;
 
 			player = new ImageView(context);
-			ConstraintLayout layout = findViewById(R.id.game_layout);
+			gameLayout = findViewById(R.id.game_layout);
 
-			layout.addView(player);
+			gameLayout.addView(player);
 			player.setImageResource(R.mipmap.ic_launcher);
 
 			mTimer = new Timer();
 			setPlayerLane(0);
+
+			enemyList = new ArrayList<>();
 		}
 
 		public void start() {
 			ticks = 0;
+
+			for(GameEntity gameEntity: enemyList) {
+				gameLayout.removeView(gameEntity);
+			}
+			enemyList.clear();
+
 			resume();
 		}
 
@@ -106,7 +120,7 @@ public class GameActivity extends AppCompatActivity {
 		public void resume() {
 			if (running) return;
 			running = true;
-			mTimer.scheduleAtFixedRate(ticker = new Ticker(), 0, 50);
+			mTimer.scheduleAtFixedRate(ticker = new Ticker(), 0, 20);
 		}
 
 		public void stop() {
@@ -117,9 +131,8 @@ public class GameActivity extends AppCompatActivity {
 
 		public void setPlayerLane(int x) {
 			player.post(() -> {
-				ConstraintLayout layout = findViewById(R.id.game_layout);
-				int layoutWidth = layout.getWidth();
-				int layoutHeight = layout.getHeight();
+				int layoutWidth = gameLayout.getWidth();
+				int layoutHeight = gameLayout.getHeight();
 
 				int laneWidth = layoutWidth / NO_OF_LANES;
 
@@ -130,10 +143,55 @@ public class GameActivity extends AppCompatActivity {
 		}
 
 		private void tick() {
+
+			// Update timer
 			int timeRemaining = GAME_TICKS - ticks;
-			String remString = getString(R.string.time_remain, timeRemaining / 20.0);
+			String remString = getString(R.string.time_remain, timeRemaining / 50.0);
 			TextView mTextView = findViewById(R.id.textView);
 			mTextView.post(() -> mTextView.setText(remString));
+
+			// Update position
+			for (GameEntity enemy: enemyList) {
+				enemy.post(() -> enemy.updatePosition());
+			}
+
+			// Check for collision
+			for (GameEntity enemy: enemyList) {
+				if (enemy.isCollided(player)) {
+					ProgressBar progressBar = findViewById(R.id.progressBar);
+					final int newHP = progressBar.getProgress() - 15;
+					if(newHP < 0) stop();
+					progressBar.post(() -> progressBar.setProgress(newHP));
+					gameLayout.post(() -> gameLayout.removeView(enemy));
+				}
+			}
+
+			/*
+			// Remove entities out of bound
+			for (GameEntity enemy: enemyList) {
+				if (!enemy.isCollided(gameLayout)) {
+					gameLayout.post(() -> gameLayout.removeView(enemy));
+				}
+			}
+			*/
+
+			// new enemy after certain interval
+			Random random = new Random();
+			if (random.nextInt(500) < 4) {
+				int layoutWidth = gameLayout.getWidth();
+				int laneWidth = layoutWidth / NO_OF_LANES;
+
+				int lane = random.nextInt(NO_OF_LANES);
+
+				GameEntity newEnemy = new GameEntity(mContext);
+				newEnemy.setImageResource(R.mipmap.ic_launcher_round);
+				newEnemy.setX(laneWidth * lane + laneWidth / 2 - player.getWidth() / 2);
+				newEnemy.setY(0);
+				gameLayout.post(() -> gameLayout.addView(newEnemy));
+				newEnemy.setAccelerationY(0.05f);
+				newEnemy.setVelocityY(4.0f);
+				enemyList.add(newEnemy);
+			}
 
 			ticks++;
 			if (ticks >= GAME_TICKS) stop();
