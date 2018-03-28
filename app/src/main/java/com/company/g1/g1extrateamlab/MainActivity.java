@@ -17,7 +17,11 @@ public class MainActivity extends AppCompatActivity {
 		startActivity(new Intent(this, GameActivity.class));
 	}
 
-    public void startAboutUs(View view) {
+	public void story(View view){
+		startActivity(new Intent(this, StoryBehind.class));
+	}
+
+  public void startAboutUs(View view) {
 	    startActivity(new Intent(this, AboutUsActivity.class));
 	}
 
