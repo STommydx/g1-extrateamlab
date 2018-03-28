@@ -45,7 +45,7 @@ public class GameActivity extends AppCompatActivity {
 		gameLayout.setOnClickListener((view -> toggleImmersiveUi()));
 
 		ProgressBar mProgressBar = findViewById(R.id.progressBar);
-		mProgressBar.getProgressDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
+		mProgressBar.getProgressDrawable().setColorFilter(Color.GREEN, android.graphics.PorterDuff.Mode.SRC_IN);
 		mProgressBar.setMax(100);
 		mProgressBar.setProgress(100);
 
@@ -102,7 +102,9 @@ public class GameActivity extends AppCompatActivity {
 //			gameLayout = findViewById(R.id.game_layout);
 
 			gameLayout.addView(player);
-			player.setImageResource(R.mipmap.ic_launcher);
+			player.setImageResource(R.drawable.me);
+			player.setScaleX(0.4f);
+			player.setScaleY(0.4f);
 
 			mTimer = new Timer();
 			setPlayerLane(0);
@@ -197,9 +199,11 @@ public class GameActivity extends AppCompatActivity {
 				int lane = random.nextInt(NO_OF_LANES);
 
 				GameEntity newEnemy = new GameEntity(mContext);
-				newEnemy.setImageResource(R.mipmap.ic_launcher_round);
-				newEnemy.setX(laneWidth * lane + laneWidth / 2 - player.getWidth() / 2);
-				newEnemy.setY(0);
+				newEnemy.setImageResource(R.drawable.gameenemy);
+				newEnemy.post(() -> {
+					newEnemy.setX(laneWidth * lane + laneWidth / 2 - newEnemy.getWidth() / 2);
+					newEnemy.setY(0);
+				});
 				gameLayout.post(() -> gameLayout.addView(newEnemy));
 				newEnemy.setAccelerationY(0.0002f * ticks);
 				newEnemy.setVelocityY(8.0f);
