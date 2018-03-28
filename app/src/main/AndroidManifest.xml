@@ -18,6 +18,10 @@
         </activity>
         <activity android:name=".GameActivity" />
         <activity android:name=".GameOverActivity" />
+        <activity
+            android:name=".StoryBehind"
+            android:label="@string/title_activity_story_behind"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

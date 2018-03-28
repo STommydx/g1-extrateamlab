@@ -10,4 +10,6 @@
     <string name="time_remain">Time: %.2f</string>
     <string name="game_over">Game Over!</string>
     <string name="hp">HP:</string>
+    <string name="title_activity_story_behind">StoryBehind</string>
+    <string name="stroystring">Oh no! All of the people in the world has infected by a mysterious virus and became a \'single dog\', except you. To survive in this world, try your best to dodge the attack of single dogs. Good luck!</string>
 </resources>
