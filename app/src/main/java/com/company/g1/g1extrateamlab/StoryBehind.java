@@ -16,8 +16,7 @@ public class StoryBehind extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.story_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
-
-        toolbar.setTitle("Story Behind");
+        getSupportActionBar().setTitle("Story Behind");
     }
 
 }
