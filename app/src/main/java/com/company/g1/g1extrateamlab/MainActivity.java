@@ -11,10 +11,14 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
 	}
 
 	public void startGame(View view) {
 		startActivity(new Intent(this, GameActivity.class));
 	}
+
+    public void startAboutUs(View view) {
+	    startActivity(new Intent(this, AboutUsActivity.class));
+	}
+
 }
