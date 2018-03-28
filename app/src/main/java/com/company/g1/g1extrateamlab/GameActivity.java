@@ -10,6 +10,8 @@ import android.hardware.SensorManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -28,12 +30,19 @@ public class GameActivity extends AppCompatActivity {
 	private Sensor mSensor;
 	private SensorListener mSensorListener;
 
+	private ConstraintLayout gameLayout;
+	private boolean isImmersive;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_game);
 
 		setupSensor();
+
+		gameLayout = findViewById(R.id.game_layout);
+		setImmersiveUi(true);
+		gameLayout.setOnClickListener((view -> toggleImmersiveUi()));
 
 		ProgressBar mProgressBar = findViewById(R.id.progressBar);
 		mProgressBar.getProgressDrawable().setColorFilter(Color.RED, android.graphics.PorterDuff.Mode.SRC_IN);
@@ -82,7 +91,7 @@ public class GameActivity extends AppCompatActivity {
 		private boolean running = false;
 
 		private Context mContext;
-		private ConstraintLayout gameLayout;
+//		private ConstraintLayout gameLayout;
 
 		private List<GameEntity> enemyList;
 
@@ -90,7 +99,7 @@ public class GameActivity extends AppCompatActivity {
 			mContext = context;
 
 			player = new ImageView(context);
-			gameLayout = findViewById(R.id.game_layout);
+//			gameLayout = findViewById(R.id.game_layout);
 
 			gameLayout.addView(player);
 			player.setImageResource(R.mipmap.ic_launcher);
@@ -242,4 +251,35 @@ public class GameActivity extends AppCompatActivity {
 
 	}
 
+	private void setImmersiveUi(boolean immersive) {
+//		FrameLayout gameLayout = findViewById(R.id.game_layout);
+
+		if(immersive) {
+			gameLayout.setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+							| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+							| View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_FULLSCREEN
+							| View.SYSTEM_UI_FLAG_IMMERSIVE);
+		}
+		else {
+			gameLayout.setSystemUiVisibility(
+					View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+							| View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+							| View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+		}
+		isImmersive = !isImmersive;
+	}
+
+	private void toggleImmersiveUi() {
+		if (isImmersive) {
+			setImmersiveUi(false);
+			mGameRound.pause();
+		}
+		else {
+			setImmersiveUi(true);
+			mGameRound.start();
+		}
+	}
 }
