@@ -11,7 +11,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -112,6 +111,9 @@ public class GameActivity extends AppCompatActivity {
                 gameLayout.addView(player);
                 player.setImageResource(R.drawable.me);
                 player.getLayoutParams().width = entityWidth;
+                //noinspection SuspiciousNameCombination
+                player.getLayoutParams().height= entityWidth;
+
             });
 
 
@@ -164,7 +166,7 @@ public class GameActivity extends AppCompatActivity {
 				int laneWidth = layoutWidth / NO_OF_LANES;
 
 				player.setX(laneWidth * x + laneWidth / 2 - entityWidth / 2);
-				player.setY(layoutHeight - entityWidth * 2);
+				player.setY(layoutHeight - entityWidth);
 
 			});
 		}
@@ -217,8 +219,7 @@ public class GameActivity extends AppCompatActivity {
                     gameLayout.addView(newEnemy);
                     int layoutWidth = gameLayout.getWidth();
                     int laneWidth = layoutWidth / NO_OF_LANES;
-                    final int dogWidth = (int)(laneWidth * 0.9);
-                    newEnemy.getLayoutParams().width = dogWidth;
+                    newEnemy.getLayoutParams().width = entityWidth;
                     newEnemy.setX(laneWidth * lane + laneWidth / 2 - entityWidth / 2);
                 });
 

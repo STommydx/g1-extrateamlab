@@ -22,8 +22,10 @@ public class GameEntity extends AppCompatImageView {
 		Rect mRect = new Rect();
 		Rect oRect = new Rect();
 		getHitRect(mRect);
-		view.getHitRect(oRect);
-		return mRect.intersect(oRect);
+        view.getHitRect(oRect);
+        // Shift player hitbox slightly downwards
+        oRect.offset(0,-5);
+        return mRect.intersect(oRect);
 	}
 
 	public void updatePosition() {
