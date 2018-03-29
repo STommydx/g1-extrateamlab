@@ -66,14 +66,12 @@ public class GameActivity extends AppCompatActivity {
 	@Override
 	protected void onPause() {
 		super.onPause();
-		mSensorListener.stopSensor();
 		mGameRound.pause();
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		mSensorListener.startSensor();
 		mGameRound.resume();
 	}
 
@@ -127,12 +125,14 @@ public class GameActivity extends AppCompatActivity {
 		public void pause() {
 			if (!running) return;
 			running = false;
+			mSensorListener.stopSensor();
 			ticker.cancel();
 		}
 
 		public void resume() {
 			if (running) return;
 			running = true;
+			mSensorListener.startSensor();
 			mTimer.scheduleAtFixedRate(ticker = new Ticker(), 0, 20);
 		}
 
