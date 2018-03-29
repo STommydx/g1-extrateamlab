@@ -12,7 +12,6 @@ public class GameEntity extends AppCompatImageView {
 
 	public GameEntity(Context context) {
 		super(context);
-
 		velocityX = 0.0f;
 		velocityY = 0.0f;
 		accelerationX = 0.0f;
