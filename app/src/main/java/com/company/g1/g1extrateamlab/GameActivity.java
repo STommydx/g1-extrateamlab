@@ -11,7 +11,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -39,20 +38,28 @@ public class GameActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_game);
 
 		setupSensor();
-
-		gameLayout = findViewById(R.id.game_layout);
-		setImmersiveUi(true);
-		gameLayout.setOnClickListener((view -> toggleImmersiveUi()));
+//
+//		gameLayout = findViewById(R.id.game_layout);
+//		setImmersiveUi(true);
+//		gameLayout.setOnClickListener((view -> toggleImmersiveUi()));
 
 		ProgressBar mProgressBar = findViewById(R.id.progressBar);
 		mProgressBar.getProgressDrawable().setColorFilter(Color.GREEN, android.graphics.PorterDuff.Mode.SRC_IN);
 		mProgressBar.setMax(100);
 		mProgressBar.setProgress(100);
 
-		mGameRound = new GameRound(this);
-		mGameRound.start();
+
+        gameLayout = findViewById(R.id.game_layout);
+        setImmersiveUi(true);
+        gameLayout.setOnClickListener((view -> toggleImmersiveUi()));
+        mGameRound = new GameRound(this);
+        mGameRound.start();
 	}
 
+	@Override
+	protected void onPostCreate(Bundle savedInstanceState){
+        super.onPostCreate(savedInstanceState);
+    }
 	private void setupSensor() {
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
 		assert mSensorManager != null;
@@ -89,20 +96,29 @@ public class GameActivity extends AppCompatActivity {
 		private boolean running = false;
 
 		private Context mContext;
-//		private ConstraintLayout gameLayout;
+        private int entityWidth;
 
 		private List<GameEntity> enemyList;
 
 		public GameRound(Context context) {
 			mContext = context;
+            player = new ImageView(context);
 
-			player = new ImageView(context);
-//			gameLayout = findViewById(R.id.game_layout);
 
-			gameLayout.addView(player);
-			player.setImageResource(R.drawable.me);
-			player.setScaleX(0.4f);
-			player.setScaleY(0.4f);
+			gameLayout.post(()-> {
+			    entityWidth = (int)(gameLayout.getWidth() / NO_OF_LANES * 0.9);
+
+                gameLayout.addView(player);
+                player.setImageResource(R.drawable.me);
+                player.getLayoutParams().width = entityWidth;
+                //noinspection SuspiciousNameCombination
+                player.getLayoutParams().height= entityWidth;
+
+            });
+
+
+//			player.setScaleX(0.8f);
+//			player.setScaleY(0.8f);
 
 			mTimer = new Timer();
 			setPlayerLane(0);
@@ -149,8 +165,8 @@ public class GameActivity extends AppCompatActivity {
 
 				int laneWidth = layoutWidth / NO_OF_LANES;
 
-				player.setX(laneWidth * x + laneWidth / 2 - player.getWidth() / 2);
-				player.setY(layoutHeight - player.getHeight());
+				player.setX(laneWidth * x + laneWidth / 2 - entityWidth / 2);
+				player.setY(layoutHeight - entityWidth);
 
 			});
 		}
@@ -193,18 +209,20 @@ public class GameActivity extends AppCompatActivity {
 			if (--spawn == 0) {
 				Random random = new Random();
 
-				int layoutWidth = gameLayout.getWidth();
-				int laneWidth = layoutWidth / NO_OF_LANES;
-
 				int lane = random.nextInt(NO_OF_LANES);
+
 
 				GameEntity newEnemy = new GameEntity(mContext);
 				newEnemy.setImageResource(R.drawable.gameenemy);
-				newEnemy.post(() -> {
-					newEnemy.setX(laneWidth * lane + laneWidth / 2 - newEnemy.getWidth() / 2);
-					newEnemy.setY(0);
-				});
-				gameLayout.post(() -> gameLayout.addView(newEnemy));
+
+                gameLayout.post(()-> {
+                    gameLayout.addView(newEnemy);
+                    int layoutWidth = gameLayout.getWidth();
+                    int laneWidth = layoutWidth / NO_OF_LANES;
+                    newEnemy.getLayoutParams().width = entityWidth;
+                    newEnemy.setX(laneWidth * lane + laneWidth / 2 - entityWidth / 2);
+                });
+
 				newEnemy.setAccelerationY(0.0002f * ticks);
 				newEnemy.setVelocityY(8.0f);
 				enemyList.add(newEnemy);
@@ -283,7 +301,7 @@ public class GameActivity extends AppCompatActivity {
 		}
 		else {
 			setImmersiveUi(true);
-			mGameRound.start();
+			mGameRound.resume();
 		}
 	}
 }
