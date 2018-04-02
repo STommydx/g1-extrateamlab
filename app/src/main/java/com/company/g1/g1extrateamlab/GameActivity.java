@@ -100,6 +100,8 @@ public class GameActivity extends AppCompatActivity {
 
 		private List<GameEntity> enemyList;
 
+		private boolean win = false;
+
 		public GameRound(Context context) {
 			mContext = context;
             player = new ImageView(context);
@@ -154,7 +156,10 @@ public class GameActivity extends AppCompatActivity {
 
 		public void stop() {
 			pause();
-			startActivity(new Intent(mContext, GameOverActivity.class));
+			if (win == true)
+				startActivity(new Intent(mContext, WinActivity.class));
+			else
+				startActivity(new Intent(mContext, GameOverActivity.class));
 			finish();
 		}
 
@@ -231,7 +236,10 @@ public class GameActivity extends AppCompatActivity {
 			}
 
 			ticks++;
-			if (ticks >= GAME_TICKS) stop();
+			if (ticks >= GAME_TICKS) {
+				win = true;
+				stop();
+			}
 		}
 
 		private class Ticker extends TimerTask {
