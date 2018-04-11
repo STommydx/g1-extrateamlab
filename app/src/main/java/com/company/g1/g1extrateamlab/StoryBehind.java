@@ -12,7 +12,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class StoryBehind extends AppCompatActivity {
+public class StoryBehind extends AbstractActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

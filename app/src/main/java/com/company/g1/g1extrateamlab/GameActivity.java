@@ -21,7 +21,7 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameActivity extends AppCompatActivity {
+public class GameActivity extends AbstractActivity {
 
 	private GameRound mGameRound;
 
